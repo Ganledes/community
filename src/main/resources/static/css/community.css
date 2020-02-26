@@ -9,3 +9,12 @@ body {
     margin-bottom: 15px;
     float: right;
 }
+.avatar {
+    width: 40px;
+    height: 40px;
+}
+.text-desc {
+    color: #999999;
+    font-size: 12px;
+    font-weight: normal;
+}
