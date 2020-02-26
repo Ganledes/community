@@ -1,5 +1,6 @@
 package com.carl.community.service;
 
+import com.carl.community.dto.PaginationDTO;
 import com.carl.community.dto.QuestionDTO;
 import com.carl.community.mapper.QuestionMapper;
 import com.carl.community.mapper.UserMapper;
@@ -26,8 +27,12 @@ public class QuestionService {
         this.userMapper = userMapper;
     }
 
-    public List<QuestionDTO> list() {
-        List<Question> questionList = questionMapper.list();
+    public PaginationDTO list(Integer page, Integer size) {
+        PaginationDTO pagination = new PaginationDTO();
+        pagination.setPage(page);
+        pagination.setSize(size);
+        Integer start = (page - 1) * size;
+        List<Question> questionList = questionMapper.list(start, size);
         ArrayList<QuestionDTO> questions = new ArrayList<>();
         for (Question question : questionList) {
             User user = userMapper.findById(question.getCreator());
@@ -36,7 +41,11 @@ public class QuestionService {
             questionDTO.setUser(user);
             questions.add(questionDTO);
         }
-        return questions;
+        pagination.setQuestions(questions);
+        Integer totalPage = questionMapper.count();
+        pagination.setTotalPage(totalPage);
+        pagination.setPagination(page, size, totalPage);
+        return pagination;
     }
 
 }
