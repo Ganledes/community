@@ -31,4 +31,12 @@ public interface UserMapper {
 
     @Select("select * from user where id = #{id}")
     User findById(int id);
+
+    /**
+     * 根据accountId获取一个用户对象
+     * @param accountId 从GitHub获取的用户id
+     * @return 返回一个user对象
+     */
+    @Select("select * from user where account_id = #{accountId}")
+    User findByAccountId(Long accountId);
 }

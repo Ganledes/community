@@ -23,9 +23,12 @@ public interface QuestionMapper {
             "(#{title},#{description},#{gmtCreate},#{gmtModified},#{creator},#{tag})")
     void create(Question question);
 
-    @Select("select * from question limit #{start}, #{size} ")
+    @Select("select * from question limit #{start}, #{size}")
     List<Question> list(Integer start, Integer size);
 
     @Select("select count(*) from question")
     Integer count();
+
+    @Select("select * from question where creator = #{userId} limit #{start}, #{size}")
+    List<Question> listByUserId(Integer userId, Integer start, Integer size);
 }

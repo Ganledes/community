@@ -51,18 +51,24 @@ public class AuthorizeController {
         String accessToken = gitHubProvider.getAccessToken(accessTokenDTO);
         GitHubUser gitHubUser = gitHubProvider.getGitHubUser(accessToken);
         if (gitHubUser != null) {
-            User user = new User();
-            user.setAccountId(String.valueOf(gitHubUser.getId()));
-            user.setName(gitHubUser.getName());
-            String token = UUID.randomUUID().toString();
-            user.setToken(token);
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
-            user.setAvatarUrl(gitHubUser.getAvatarUrl());
-            System.out.println(gitHubUser.getAvatarUrl());
-            userMapper.insert(user);
+            User user = userMapper.findByAccountId(gitHubUser.getId());
+            String token;
+            if (user != null) {
+                token = user.getToken();
+            } else {
+                user = new User();
+                user.setAccountId(String.valueOf(gitHubUser.getId()));
+                user.setName(gitHubUser.getName());
+                token = UUID.randomUUID().toString();
+                user.setToken(token);
+                user.setGmtCreate(System.currentTimeMillis());
+                user.setGmtModified(user.getGmtCreate());
+                user.setAvatarUrl(gitHubUser.getAvatarUrl());
+                userMapper.insert(user);
+            }
             Cookie cookie = new Cookie("token", token);
-            cookie.setMaxAge(60 * 60 * 24 * 365);
+            // 设置cookie过期时间为30天
+            cookie.setMaxAge(60 * 60 * 24 * 30);
             response.addCookie(cookie);
         }
         return "redirect:/";
