@@ -35,7 +35,7 @@ public class QuestionService {
         List<Question> questionList = questionMapper.list(start, size);
         ArrayList<QuestionDTO> questions = new ArrayList<>();
         for (Question question : questionList) {
-            User user = userMapper.findById(question.getCreator());
+            User user = userMapper.getById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question, questionDTO);
             questionDTO.setUser(user);
@@ -56,7 +56,7 @@ public class QuestionService {
         List<Question> questionList = questionMapper.listByUserId(userId, start, size);
         ArrayList<QuestionDTO> questions = new ArrayList<>();
         for (Question question : questionList) {
-            User user = userMapper.findById(question.getCreator());
+            User user = userMapper.getById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question, questionDTO);
             questionDTO.setUser(user);
@@ -67,5 +67,27 @@ public class QuestionService {
         pagination.setTotalPage(totalPage);
         pagination.setPagination(page, size, totalPage);
         return pagination;
+    }
+
+    public QuestionDTO getById(Integer id) {
+        QuestionDTO questionDTO = new QuestionDTO();
+        Question question = questionMapper.getById(id);
+        BeanUtils.copyProperties(question, questionDTO);
+        User user = userMapper.getById(question.getCreator());
+        questionDTO.setUser(user);
+        return questionDTO;
+    }
+
+    public void createOrUpdate(Question question) {
+        Question dbQuestion = questionMapper.getById(question.getId());
+        question.setGmtModified(System.currentTimeMillis());
+        if (dbQuestion == null) {
+            question.setGmtCreate(System.currentTimeMillis());
+            questionMapper.create(question);
+        } else {
+            question.setCommentCount(dbQuestion.getCommentCount());
+            question.setViewCount(dbQuestion.getViewCount());
+            questionMapper.update(question);
+        }
     }
 }

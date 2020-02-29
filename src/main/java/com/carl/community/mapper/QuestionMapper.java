@@ -4,6 +4,7 @@ import com.carl.community.model.Question;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,4 +32,11 @@ public interface QuestionMapper {
 
     @Select("select * from question where creator = #{userId} limit #{start}, #{size}")
     List<Question> listByUserId(Integer userId, Integer start, Integer size);
+
+    @Select("select * from question where id = #{id}")
+    Question getById(Integer id);
+
+    @Update("update question set title=#{title},description=#{description},gmt_modified=#{gmtModified}," +
+            "comment_count=#{commentCount},view_count=#{viewCount},tag=#{tag} where id=#{id}")
+    void update(Question question);
 }

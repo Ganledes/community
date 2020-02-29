@@ -1,11 +1,13 @@
 package com.carl.community.controller;
 
-import com.carl.community.mapper.QuestionMapper;
+import com.carl.community.dto.QuestionDTO;
 import com.carl.community.model.Question;
 import com.carl.community.model.User;
+import com.carl.community.service.QuestionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,14 +18,21 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class PublishController {
 
-    private QuestionMapper questionMapper;
+    private QuestionService questionService;
 
-    public PublishController(QuestionMapper questionMapper) {
-        this.questionMapper = questionMapper;
+    public PublishController(QuestionService questionService) {
+        this.questionService = questionService;
     }
 
     @GetMapping("/publish")
     public String publish() {
+        return "publish";
+    }
+
+    @GetMapping("/publish/{id}")
+    public String edit(@PathVariable("id") Integer id, Model model) {
+        QuestionDTO questionDTO = questionService.getById(id);
+        model.addAttribute("question", questionDTO);
         return "publish";
     }
 
@@ -45,9 +54,7 @@ public class PublishController {
         }
         User user = (User) obj;
         question.setCreator(user.getId());
-        question.setGmtCreate(System.currentTimeMillis());
-        question.setGmtModified(question.getGmtCreate());
-        questionMapper.create(question);
+        questionService.createOrUpdate(question);
         return "redirect:/";
     }
 }

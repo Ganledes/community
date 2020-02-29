@@ -17,6 +17,7 @@
             <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发起</h2>
             <hr>
             <form action="/publish" method="post">
+                <input type="hidden" name="id" th:value="${question != null} ? ${question.id} : null">
                 <div class="form-group">
                     <label for="title">问题标题（简单扼要）：</label>
                     <input type="text" th:value="${question != null} ? ${question.title}" class="form-control"

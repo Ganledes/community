@@ -3,7 +3,7 @@ body {
 }
 .main {
     background-color: white;
-    margin: 30px;
+    margin: 20px 60px;
 }
 .btn-publish {
     margin-bottom: 15px;
@@ -15,9 +15,12 @@ body {
 }
 .text-desc {
     color: #999999;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: normal;
 }
 .profile .section {
     margin: 20px;
+}
+.media {
+    margin: 15px 0;
 }
