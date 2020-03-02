@@ -24,7 +24,7 @@
             <p th:text="${question.description}"></p>
             <hr>
             <a href="#" th:href="@{/publish/{id}(id=${question.id})}" class="text-desc"
-               th:if="${question.user.equals(#session.getAttribute('user'))}">
+               th:if="${session.user != null && session.user.id == question.user.id}">
                 <span class="glyphicon glyphicon-pencil"></span>&nbsp;编辑
             </a>
         </div>

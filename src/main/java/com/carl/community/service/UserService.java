@@ -2,7 +2,10 @@ package com.carl.community.service;
 
 import com.carl.community.mapper.UserMapper;
 import com.carl.community.model.User;
+import com.carl.community.model.UserExample;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author zhaoq
@@ -18,20 +21,31 @@ public class UserService {
     }
 
     public void insertOrUpdate(User user) {
-        User dbUser = userMapper.getByAccountId(Long.valueOf(user.getAccountId()));
-        if (dbUser != null) {
-            update(user);
-        } else {
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
+        List<User> users = userMapper.selectByExample(userExample);
+        if (users.isEmpty()) {
+            user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtModified(user.getGmtCreate());
             userMapper.insert(user);
+        } else {
+            user.setId(users.get(0).getId());
+            update(user);
         }
     }
 
     public void update(User user) {
         user.setGmtModified(System.currentTimeMillis());
-        userMapper.update(user);
+        userMapper.updateByPrimaryKeySelective(user);
     }
 
     public String getTokenByAccountId(String accountId) {
-        return userMapper.getTokenByAccountId(accountId);
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andAccountIdEqualTo(accountId);
+        List<User> users = userMapper.selectByExample(userExample);
+        if (users.isEmpty()) {
+            return null;
+        }
+        return users.get(0).getToken();
     }
 }

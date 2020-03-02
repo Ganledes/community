@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:title="${status}">码匠社区</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/css/community.css">
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="navigation :: copy"></div>
+<div class="container">
+    <div class="jumbotron">
+        <h1>出错啦</h1>
+        <p th:text="${message != null} ? ${message} : '服务器开小差了，稍后再试吧'"></p>
+        <h4>状态码：<span th:text="${status}"></span></h4>
+        <p><a class="btn btn-primary btn-lg" href="/" role="button">回到主页</a></p>
+    </div>
+</div>
+</body>
+</html>
