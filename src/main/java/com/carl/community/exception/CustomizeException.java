@@ -6,8 +6,15 @@ package com.carl.community.exception;
  */
 public class CustomizeException extends RuntimeException {
 
+    private ErrorMessage errorMessage;
+
     public CustomizeException(ErrorMessage errorMessage) {
         super(errorMessage.getMessage());
+        this.errorMessage = errorMessage;
+    }
+
+    public ErrorMessage getErrorMessage() {
+        return errorMessage;
     }
 
 }

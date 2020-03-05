@@ -3,7 +3,6 @@ body {
 }
 .main {
     background-color: white;
-    margin: 20px 60px;
 }
 .btn-publish {
     margin-bottom: 15px;
@@ -23,4 +22,30 @@ body {
 }
 .media {
     margin: 15px 0;
+}
+.comment {
+    margin: 10px 0;
+}
+.btn-comment {
+    margin-bottom: 10px;
+    float: right;
+}
+.commenter {
+    margin-top: 4px;
+    color: #999;
+}
+.comment-footer {
+    color: #999;
+}
+.icon {
+    font-size: 16px;
+    margin-right: 5px;
+}
+.comment-footer .time {
+    font-size: 12px;
+    float: right;
+}
+
+.hr-comment {
+    margin: 10px 0;
 }

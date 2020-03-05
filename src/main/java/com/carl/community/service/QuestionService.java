@@ -5,6 +5,7 @@ import com.carl.community.dto.QuestionDTO;
 import com.carl.community.exception.CustomizeException;
 import com.carl.community.exception.ErrorMessage;
 import com.carl.community.mapper.QuestionMapper;
+import com.carl.community.mapper.QuestionMapperExt;
 import com.carl.community.mapper.UserMapper;
 import com.carl.community.model.Question;
 import com.carl.community.model.QuestionExample;
@@ -24,10 +25,13 @@ public class QuestionService {
 
     private QuestionMapper questionMapper;
 
+    private QuestionMapperExt questionMapperExt;
+
     private UserMapper userMapper;
 
-    public QuestionService(QuestionMapper questionMapper, UserMapper userMapper) {
+    public QuestionService(QuestionMapper questionMapper, QuestionMapperExt questionMapperExt, UserMapper userMapper) {
         this.questionMapper = questionMapper;
+        this.questionMapperExt = questionMapperExt;
         this.userMapper = userMapper;
     }
 
@@ -35,7 +39,7 @@ public class QuestionService {
         return list(null, page, size);
     }
 
-    public PaginationDTO list(Integer userId, Integer page, Integer size) {
+    public PaginationDTO list(Long userId, Integer page, Integer size) {
         PaginationDTO pagination = new PaginationDTO();
         pagination.setPage(page);
         pagination.setSize(size);
@@ -44,8 +48,7 @@ public class QuestionService {
         if (userId != null) {
             questionExample.createCriteria().andCreatorEqualTo(userId);
         }
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample,
-                new RowBounds(start, size));
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(start, size));
         ArrayList<QuestionDTO> questions = new ArrayList<>();
         for (Question question : questionList) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -61,7 +64,7 @@ public class QuestionService {
         return pagination;
     }
 
-    public QuestionDTO getById(Integer id) {
+    public QuestionDTO getById(Long id) {
         QuestionDTO questionDTO = new QuestionDTO();
         Question question = questionMapper.selectByPrimaryKey(id);
         if (question == null) {
@@ -86,6 +89,13 @@ public class QuestionService {
             if (updated < 1) {
                 throw new CustomizeException(ErrorMessage.SERVER_ERROR);
             }
+        }
+    }
+
+    public void incViews(Long id) {
+        int updated = questionMapperExt.incViews(id);
+        if (updated < 1) {
+            throw new CustomizeException(ErrorMessage.UPDATE_FAILED);
         }
     }
 }
