@@ -16,7 +16,8 @@ public enum ErrorMessage {
     COMMENT_TYPE_WRONG(1005, "您请求的评论不存在"),
     COMMENT_TARGET_NOT_FOUND(1006, "你要评论的问题或回复不存在"),
     TARGET_PARAM_NOT_FOUND(1007, "未选择任何问题或评论"),
-    UPDATE_FAILED(1008, "更新失败");
+    UPDATE_FAILED(1008, "更新失败"),
+    COMMENT_IS_EMPTY(1009, "评论内容不能为空");
 
 
     private Integer errorCode;

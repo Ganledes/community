@@ -2,6 +2,7 @@ package com.carl.community.controller;
 
 import com.carl.community.dto.CommentDTO;
 import com.carl.community.dto.QuestionDTO;
+import com.carl.community.enums.CommentType;
 import com.carl.community.service.CommentService;
 import com.carl.community.service.QuestionService;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,7 @@ public class QuestionController {
     public String question(@PathVariable("id") Long id,
                            Model model) {
         QuestionDTO questionDTO = questionService.getById(id);
-        List<CommentDTO> comments = commentService.listByQuestionId(id);
+        List<CommentDTO> comments = commentService.listByParentId(id, CommentType.QUESTION);
         model.addAttribute("question", questionDTO);
         model.addAttribute("comments", comments);
         questionService.incViews(id);

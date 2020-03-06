@@ -4,15 +4,14 @@ import com.carl.community.dto.CommentDTO;
 import com.carl.community.enums.CommentType;
 import com.carl.community.exception.CustomizeException;
 import com.carl.community.exception.ErrorMessage;
-import com.carl.community.mapper.CommentMapper;
-import com.carl.community.mapper.QuestionMapper;
-import com.carl.community.mapper.QuestionMapperExt;
-import com.carl.community.mapper.UserMapper;
+import com.carl.community.mapper.*;
 import com.carl.community.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,11 +31,15 @@ public class CommentService {
 
     private QuestionMapperExt questionMapperExt;
 
-    public CommentService(CommentMapper commentMapper, QuestionMapper questionMapper, UserMapper userMapper, QuestionMapperExt questionMapperExt) {
+    private CommentMapperExt commentMapperExt;
+
+    public CommentService(CommentMapper commentMapper, QuestionMapper questionMapper, UserMapper userMapper,
+                          QuestionMapperExt questionMapperExt, CommentMapperExt commentMapperExt) {
         this.commentMapper = commentMapper;
         this.questionMapper = questionMapper;
         this.userMapper = userMapper;
         this.questionMapperExt = questionMapperExt;
+        this.commentMapperExt = commentMapperExt;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -47,7 +50,11 @@ public class CommentService {
         if (comment.getParentId() == null) {
             throw new CustomizeException(ErrorMessage.TARGET_PARAM_NOT_FOUND);
         }
+        if (StringUtils.isEmpty(comment.getContent())) {
+            throw new CustomizeException(ErrorMessage.COMMENT_IS_EMPTY);
+        }
         if (CommentType.QUESTION.getType().equals(comment.getParentType())) {
+            // 回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
             if (question == null) {
                 throw new CustomizeException(ErrorMessage.QUESTION_NOT_FOUND);
@@ -55,20 +62,29 @@ public class CommentService {
             commentMapper.insertSelective(comment);
             questionMapperExt.incCommentCount(comment.getParentId());
         } else {
+            // 回复评论
             Comment targetComment = commentMapper.selectByPrimaryKey(comment.getParentId());
             if (targetComment == null) {
                 throw new CustomizeException(ErrorMessage.COMMENT_TARGET_NOT_FOUND);
             }
             commentMapper.insertSelective(comment);
+            // 增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(comment.getParentId());
+            parentComment.setCommentCount(1);
+            commentMapperExt.incCommentCount(parentComment);
         }
     }
 
-    public List<CommentDTO> listByQuestionId(Long id) {
+    public List<CommentDTO> listByParentId(Long parentId, CommentType type) {
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria()
-                .andParentTypeEqualTo(CommentType.QUESTION.getType())
-                .andParentIdEqualTo(id);
+                .andParentTypeEqualTo(type.getType())
+                .andParentIdEqualTo(parentId);
         List<Comment> commentList = commentMapper.selectByExample(commentExample);
+        if (commentList.isEmpty()) {
+            return new ArrayList<>();
+        }
         List<Long> commenterIds = commentList.stream().map(Comment::getCommenter).distinct().collect(Collectors.toList());
         UserExample userExample = new UserExample();
         userExample.createCriteria()
@@ -82,4 +98,5 @@ public class CommentService {
             return commentDTO;
         }).collect(Collectors.toList());
     }
+
 }

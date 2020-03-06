@@ -1,51 +1,75 @@
 body {
     background-color: #efefef;
 }
+
 .main {
     background-color: white;
 }
+
 .btn-publish {
     margin-bottom: 15px;
     float: right;
 }
+
 .avatar {
     width: 40px;
     height: 40px;
 }
+
 .text-desc {
     color: #999999;
     font-size: 13px;
     font-weight: normal;
 }
+
 .profile .section {
     margin: 20px;
 }
+
 .media {
     margin: 15px 0;
 }
+
 .comment {
     margin: 10px 0;
 }
+
 .btn-comment {
     margin-bottom: 10px;
     float: right;
 }
+
 .commenter {
     margin-top: 4px;
     color: #999;
 }
+
 .comment-footer {
     color: #999;
 }
+
 .icon {
     font-size: 16px;
     margin-right: 5px;
 }
-.comment-footer .time {
+
+.icon:hover {
+    cursor: pointer;
+    color: #499ef3;
+}
+
+.time {
     font-size: 12px;
+}
+
+.comment-footer .time {
     float: right;
 }
 
 .hr-comment {
     margin: 10px 0;
+}
+
+.collapse .well {
+    background: transparent;
 }

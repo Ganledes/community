@@ -2,7 +2,9 @@ package com.carl.community.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.carl.community.dto.CommentCreateDTO;
+import com.carl.community.dto.CommentDTO;
 import com.carl.community.dto.ResultDTO;
+import com.carl.community.enums.CommentType;
 import com.carl.community.exception.CustomizeException;
 import com.carl.community.exception.ErrorMessage;
 import com.carl.community.model.Comment;
@@ -10,11 +12,10 @@ import com.carl.community.model.User;
 import com.carl.community.service.CommentService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author zhaoq
@@ -43,6 +44,13 @@ public class CommentController {
         comment.setGmtModified(comment.getGmtCreate());
         commentService.insertSelective(comment);
         return JSON.toJSONString(ResultDTO.ok());
+    }
+
+    @ResponseBody
+    @GetMapping("/comment/{parentId}")
+    public ResultDTO<List<CommentDTO>> getComments(@PathVariable("parentId") Long parentId) {
+        List<CommentDTO> comments = commentService.listByParentId(parentId, CommentType.COMMENT);
+        return ResultDTO.ok(comments);
     }
 
 }
