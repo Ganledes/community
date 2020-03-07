@@ -15,15 +15,22 @@
     <result column="DESCRIPTION" jdbcType="CLOB" property="description" />
   </resultMap>
 
-  <update id="incViews" parameterType="java.lang.Long">
+  <select id="selectRelated" parameterType="com.carl.community.model.Question" resultMap="ResultMapWithBLOBs">
+    select *
+    from QUESTION
+    where ID != #{id}
+    and TAG regexp #{tag}
+  </select>
+
+  <update id="incViews" parameterType="com.carl.community.model.Question">
     update QUESTION
-    set VIEW_COUNT = VIEW_COUNT + 1
+    set VIEW_COUNT = VIEW_COUNT + #{viewCount,jdbcType=INTEGER}
     where ID = #{id}
   </update>
 
-  <update id="incCommentCount" parameterType="java.lang.Long">
+  <update id="incCommentCount" parameterType="com.carl.community.model.Question">
     update QUESTION
-    set COMMENT_COUNT = COMMENT_COUNT + 1
+    set COMMENT_COUNT = COMMENT_COUNT + #{commentCount,jdbcType=INTEGER}
     where ID = #{id}
   </update>
 

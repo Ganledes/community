@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author zhaoq
@@ -48,6 +49,7 @@ public class QuestionService {
         if (userId != null) {
             questionExample.createCriteria().andCreatorEqualTo(userId);
         }
+        questionExample.setOrderByClause("gmt_modified desc");
         List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(start, size));
         ArrayList<QuestionDTO> questions = new ArrayList<>();
         for (Question question : questionList) {
@@ -81,21 +83,27 @@ public class QuestionService {
         question.setGmtModified(System.currentTimeMillis());
         if (dbQuestion == null) {
             question.setGmtCreate(System.currentTimeMillis());
-            questionMapper.insert(question);
+            questionMapper.insertSelective(question);
         } else {
             question.setCommentCount(dbQuestion.getCommentCount());
             question.setViewCount(dbQuestion.getViewCount());
-            int updated = questionMapper.updateByPrimaryKeySelective(question);
-            if (updated < 1) {
-                throw new CustomizeException(ErrorMessage.SERVER_ERROR);
-            }
+            questionMapper.updateByPrimaryKeySelective(question);
         }
     }
 
-    public void incViews(Long id) {
-        int updated = questionMapperExt.incViews(id);
-        if (updated < 1) {
-            throw new CustomizeException(ErrorMessage.UPDATE_FAILED);
-        }
+    public void incViews(Question question) {
+        questionMapperExt.incViews(question);
+    }
+
+    public List<QuestionDTO> selectRelated(Long id) {
+        Question question = questionMapper.selectByPrimaryKey(id);
+        String tag = question.getTag().replace(';', '|');
+        question.setTag(tag);
+        List<Question> relatedQuestionList = questionMapperExt.selectRelated(question);
+        return relatedQuestionList.stream().map(q -> {
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(q, questionDTO);
+            return questionDTO;
+        }).collect(Collectors.toList());
     }
 }

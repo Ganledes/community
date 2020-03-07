@@ -55,12 +55,13 @@ public class CommentService {
         }
         if (CommentType.QUESTION.getType().equals(comment.getParentType())) {
             // 回复问题
-            Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
-            if (question == null) {
+            Question parentQuestion = questionMapper.selectByPrimaryKey(comment.getParentId());
+            if (parentQuestion == null) {
                 throw new CustomizeException(ErrorMessage.QUESTION_NOT_FOUND);
             }
             commentMapper.insertSelective(comment);
-            questionMapperExt.incCommentCount(comment.getParentId());
+            parentQuestion.setCommentCount(1);
+            questionMapperExt.incCommentCount(parentQuestion);
         } else {
             // 回复评论
             Comment targetComment = commentMapper.selectByPrimaryKey(comment.getParentId());

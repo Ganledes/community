@@ -73,3 +73,21 @@ body {
 .collapse .well {
     background: transparent;
 }
+
+.community-tag {
+    display: inline-block;
+    font-size: 12px;
+    margin: 5px 8px;
+    cursor: pointer;
+}
+
+.related-question {
+    list-style: none;
+    padding-left: 0;
+    line-height: 24px;
+    font-size: 14px;
+}
+
+#tag_selector {
+    display: none;
+}

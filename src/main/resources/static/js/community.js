@@ -78,3 +78,16 @@ function collapse(e) {
     }
     target.toggleClass("in");
 }
+
+function showTagSelector() {
+    $("#tag_selector").show();
+}
+
+function addTag(e) {
+    $(e).hide();
+    let tag = $(e).data("tag");
+    let input = $("#tag_input");
+    let inputValue = input.val();
+    inputValue += tag;
+    input.val(inputValue + ";");
+}

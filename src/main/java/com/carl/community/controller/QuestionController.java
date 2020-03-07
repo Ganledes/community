@@ -3,6 +3,7 @@ package com.carl.community.controller;
 import com.carl.community.dto.CommentDTO;
 import com.carl.community.dto.QuestionDTO;
 import com.carl.community.enums.CommentType;
+import com.carl.community.model.Question;
 import com.carl.community.service.CommentService;
 import com.carl.community.service.QuestionService;
 import org.springframework.stereotype.Controller;
@@ -33,9 +34,17 @@ public class QuestionController {
                            Model model) {
         QuestionDTO questionDTO = questionService.getById(id);
         List<CommentDTO> comments = commentService.listByParentId(id, CommentType.QUESTION);
+        // 增加评论数
+        Question question = new Question();
+        question.setId(id);
+        question.setViewCount(1);
+        questionService.incViews(question);
+        // 获取相关问题
+        List<QuestionDTO> relatedQuestions = questionService.selectRelated(id);
+
         model.addAttribute("question", questionDTO);
         model.addAttribute("comments", comments);
-        questionService.incViews(id);
+        model.addAttribute("relatedQuestions", relatedQuestions);
         return "question";
     }
 

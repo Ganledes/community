@@ -25,6 +25,13 @@
             <hr>
             <p th:text="${question.description}"></p>
             <hr>
+            <!--tag-->
+            <span class="label label-info community-tag" th:each="tag : ${question.tag.split(';')}">
+                <span class="glyphicon glyphicon-tag"></span>
+                <span th:text="${tag}"></span>
+            </span>
+            <!--编辑-->
+            <hr>
             <a href="#" th:href="@{/publish/{id}(id=${question.id})}" class="text-desc"
                th:if="${session.user != null && session.user.id == question.user.id}">
                 <span class="glyphicon glyphicon-pencil"></span>&nbsp;编辑
@@ -95,6 +102,11 @@
             <span th:text="${question.user.name}"></span>
             <hr>
             <h4>相关问题</h4>
+            <ul class="related-question">
+                <li th:each="question : ${relatedQuestions}">
+                    <a href="" th:href="@{/question/{id}(id = ${question.id})}" th:text="${question.title}"></a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
