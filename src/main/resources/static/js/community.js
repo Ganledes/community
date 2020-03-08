@@ -84,10 +84,21 @@ function showTagSelector() {
 }
 
 function addTag(e) {
-    $(e).hide();
     let tag = $(e).data("tag");
     let input = $("#tag_input");
     let inputValue = input.val();
+    let tags = inputValue.split(";");
+    if (tags.includes(tag)) {
+        $(e).hide();
+        return;
+    }
     inputValue += tag;
     input.val(inputValue + ";");
+}
+
+function toggleActive(e) {
+    let list = $(e).parent().get();
+    let children = $(list).children();
+    children.removeClass("active");
+    $(e).addClass("active");
 }

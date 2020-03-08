@@ -36,12 +36,12 @@ public class QuestionService {
         this.userMapper = userMapper;
     }
 
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO<QuestionDTO> list(int page, int size) {
         return list(null, page, size);
     }
 
-    public PaginationDTO list(Long userId, Integer page, Integer size) {
-        PaginationDTO pagination = new PaginationDTO();
+    public PaginationDTO<QuestionDTO> list(Long userId, int page, int size) {
+        PaginationDTO<QuestionDTO> pagination = new PaginationDTO<>();
         pagination.setPage(page);
         pagination.setSize(size);
         int start = (page - 1) * size;
@@ -59,10 +59,10 @@ public class QuestionService {
             questionDTO.setUser(user);
             questions.add(questionDTO);
         }
-        pagination.setQuestions(questions);
-        Integer totalPage = Math.toIntExact(questionMapper.countByExample(new QuestionExample()));
-        pagination.setTotalPage(totalPage);
-        pagination.setPagination(page, size, totalPage);
+        pagination.setList(questions);
+        Integer count = Math.toIntExact(questionMapper.countByExample(new QuestionExample()));
+        pagination.setCount(count);
+        pagination.setPagination(page, size, count);
         return pagination;
     }
 

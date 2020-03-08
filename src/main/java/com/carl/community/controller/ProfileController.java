@@ -1,7 +1,12 @@
 package com.carl.community.controller;
 
+import com.carl.community.dto.NotificationDTO;
 import com.carl.community.dto.PaginationDTO;
+import com.carl.community.dto.QuestionDTO;
+import com.carl.community.exception.CustomizeException;
+import com.carl.community.exception.ErrorMessage;
 import com.carl.community.model.User;
+import com.carl.community.service.NotificationService;
 import com.carl.community.service.QuestionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,8 +26,11 @@ public class ProfileController {
 
     private QuestionService questionService;
 
-    public ProfileController(QuestionService questionService) {
+    private NotificationService notificationService;
+
+    public ProfileController(QuestionService questionService, NotificationService notificationService) {
         this.questionService = questionService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/questions")
@@ -31,12 +39,30 @@ public class ProfileController {
                             Model model,
                             HttpSession session) {
         User user = (User) session.getAttribute("user");
-        assert user != null;
-        PaginationDTO paginationDTO = questionService.list(user.getId(), page, size);
-        model.addAttribute("action", "questions");
+        if (user == null) {
+            return "redirect:/";
+        }
+        PaginationDTO<QuestionDTO> paginationDTO = questionService.list(user.getId(), page, size);
+        model.addAttribute("action", "question");
         model.addAttribute("actionName", "我的提问");
-        model.addAttribute("pagination", paginationDTO);
+        model.addAttribute("questionPagination", paginationDTO);
+        model.addAttribute("pageInfo", paginationDTO);
         return "profile";
     }
 
+    @GetMapping("/notifications")
+    public String notifications(@RequestParam(name = "page", defaultValue = "1") int page,
+                                @RequestParam(name = "size", defaultValue = "5") int size,
+                                Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        PaginationDTO<NotificationDTO> pagination= notificationService.list(user.getId(), page, size);
+        notificationService.read(user.getId());
+        int unreadCount = notificationService.getUnreadCount(user.getId());
+        session.setAttribute("notificationCount", unreadCount);
+        model.addAttribute("action", "notification");
+        model.addAttribute("actionName", "最新回复");
+        model.addAttribute("notificationPagination", pagination);
+        model.addAttribute("pageInfo", pagination);
+        return "profile";
+    }
 }

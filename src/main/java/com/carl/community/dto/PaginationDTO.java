@@ -9,11 +9,12 @@ import java.util.List;
  * @author zhaoq
  */
 @Data
-public class PaginationDTO {
+public class PaginationDTO<T> {
 
     private Integer page;
     private Integer size;
     private Integer totalPage;
+    private Integer count;
     private Boolean showNext;
     private Boolean showFirst;
     private Boolean showPrevious;
@@ -21,10 +22,13 @@ public class PaginationDTO {
 
     private List<Integer> pages;
 
-    private List<QuestionDTO> questions;
+    private List<T> list;
 
     public void setPagination(Integer page, Integer size, Integer count) {
         totalPage = count % size == 0 ? count / size : count / size + 1;
+        if (totalPage == 0) {
+            totalPage = 1;
+        }
         pages = new ArrayList<>();
         pages.add(page);
         int pageCount = 3;

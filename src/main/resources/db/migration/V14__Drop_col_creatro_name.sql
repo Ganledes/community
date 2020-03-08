@@ -1,0 +1,1 @@
+alter table NOTIFICATION drop column CREATOR_NAME;

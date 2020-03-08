@@ -2,6 +2,8 @@ package com.carl.community.service;
 
 import com.carl.community.dto.CommentDTO;
 import com.carl.community.enums.CommentType;
+import com.carl.community.enums.NotificationStatus;
+import com.carl.community.enums.NotificationType;
 import com.carl.community.exception.CustomizeException;
 import com.carl.community.exception.ErrorMessage;
 import com.carl.community.mapper.*;
@@ -33,13 +35,17 @@ public class CommentService {
 
     private CommentMapperExt commentMapperExt;
 
+    private NotificationService notificationService;
+
     public CommentService(CommentMapper commentMapper, QuestionMapper questionMapper, UserMapper userMapper,
-                          QuestionMapperExt questionMapperExt, CommentMapperExt commentMapperExt) {
+                          QuestionMapperExt questionMapperExt, CommentMapperExt commentMapperExt,
+                          NotificationService notificationService) {
         this.commentMapper = commentMapper;
         this.questionMapper = questionMapper;
         this.userMapper = userMapper;
         this.questionMapperExt = questionMapperExt;
         this.commentMapperExt = commentMapperExt;
+        this.notificationService = notificationService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -62,6 +68,15 @@ public class CommentService {
             commentMapper.insertSelective(comment);
             parentQuestion.setCommentCount(1);
             questionMapperExt.incCommentCount(parentQuestion);
+            // 创建通知
+            Notification notification = new Notification();
+            notification.setCreatorId(comment.getCommenter());
+            notification.setReceiver(parentQuestion.getCreator());
+            notification.setType(NotificationType.REPLY_QUESTION.getType());
+            notification.setParentId(parentQuestion.getId());
+            notification.setStatus(NotificationStatus.UNREAD.getStatus());
+            notification.setOuterTittle(parentQuestion.getTitle());
+            notificationService.create(notification);
         } else {
             // 回复评论
             Comment targetComment = commentMapper.selectByPrimaryKey(comment.getParentId());
@@ -74,6 +89,15 @@ public class CommentService {
             parentComment.setId(comment.getParentId());
             parentComment.setCommentCount(1);
             commentMapperExt.incCommentCount(parentComment);
+            // 创建通知
+            Notification notification = new Notification();
+            notification.setCreatorId(comment.getCommenter());
+            notification.setReceiver(targetComment.getCommenter());
+            notification.setType(NotificationType.REPLY_COMMENT.getType());
+            notification.setParentId(targetComment.getId());
+            notification.setStatus(NotificationStatus.UNREAD.getStatus());
+            notification.setOuterTittle(targetComment.getContent());
+            notificationService.create(notification);
         }
     }
 
