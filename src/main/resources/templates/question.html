@@ -2,20 +2,26 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title th:title="${question.getTitle()}">问题</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/community.css">
+    <link rel="stylesheet" href="/editor.md/css/editormd.preview.min.css"/>
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/moment.min.js"></script>
     <script src="/js/community.js"></script>
+    <script src="/editor.md/editormd.min.js"></script>
+    <script src="/editor.md/lib/marked.min.js"></script>
+    <script src="/editor.md/lib/prettify.min.js"></script>
 </head>
 <body>
 <div th:replace="navigation :: copy"></div>
 <div class="container main">
     <div class="row">
-        <div class="col-md-9 col-sm-12">
+        <div class="col-md-9">
             <h3 th:text="${question.getTitle()}"></h3>
             <span class="text-desc">
                 作者：<span th:text="${question.user.name}"></span> |
@@ -23,7 +29,14 @@
                 阅读数：<span th:text="${question.viewCount}"></span>
             </span>
             <hr>
-            <p th:text="${question.description}"></p>
+            <div id="test-markdown-view">
+                <textarea style="display:none;" th:text="${question.description}"></textarea>
+            </div>
+            <script type="text/javascript">
+                $(function() {
+                    editormd.markdownToHTML("test-markdown-view", {});
+                });
+            </script>
             <hr>
             <!--tag-->
             <span class="label label-info community-tag" th:each="tag : ${question.tag.split(';')}">
@@ -62,11 +75,11 @@
                         <div class="well" th:id="${'well_' + comment.id}">
                             <!--二级评论回复框-->
                             <div class="row">
-                                <div class="col-xs-11">
+                                <div class="col-md-11 col-xs-12">
                                     <input type="text" class="form-control"
                                            th:id="${'input_' + comment.id}"></div>
-                                <div class="col-xs-1">
-                                    <button class="btn btn-success pull-right" type="submit"
+                                <div class="col-md-1">
+                                    <button class="btn btn-success pull-right btn-reply" type="submit"
                                             th:data-content-id="${'input_' + comment.id}"
                                             data-parent-type="2"
                                             th:data-parent-id="${comment.id}"
@@ -96,7 +109,7 @@
                 </button>
             </div>
         </div>
-        <div class="col-md-3 col-sm-12">
+        <div class="col-md-3">
             <h4>发起人</h4>
             <img th:src="${question.user.avatarUrl}" class="avatar img-rounded" alt="" src="">
             <span th:text="${question.user.name}"></span>

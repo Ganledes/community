@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title th:text="${actionName}">个人中心</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
@@ -20,7 +22,7 @@
 <div th:replace="navigation :: copy"></div>
 <div class="container main profile">
     <div class="row">
-        <div class="col-md-9 col-sm-12">
+        <div class="col-md-9">
             <!--问题列表-->
             <div class="" th:if="${action.equals('question')}">
                 <h2><span class="glyphicon glyphicon-list" aria-hidden="true"> </span> [[${actionName}]]</h2>
@@ -65,8 +67,10 @@
                         <h5 class="media-heading">
                             <a href="" th:text="${notification.creator.name}"></a>
                             <span th:text="${notification.action}"></span>
+                            <span class="label label-primary" th:if="${notification.status == 0}">未读</span>
                         </h5>
-                        <p th:text="${notification.outerTittle}"></p>
+                        <a th:href="@{/profile/notification/{id}(id=${notification.id})}"
+                           th:text="${notification.outerTittle}"></a>
                     </div>
                 </div>
 
@@ -102,11 +106,11 @@
             </nav>
         </div>
 
-        <div class="col-md-3 col-sm-12">
+        <div class="col-md-3">
             <div class="list-group section" th:data-action="${action}" id="selector">
                 <a href="/profile/questions" class="list-group-item" id="question" onclick="toggleActive(this)">
                     我的提问</a>
-                <a href="/profile/notifications" class="list-group-item" id="notification" onclick="toggleActive(this)">
+                <a href="/profile/notification" class="list-group-item" id="notification" onclick="toggleActive(this)">
                     最新回复
                     <span class="badge" th:if="${session.notificationCount != null && session.notificationCount > 0}"
                           th:text="${session.notificationCount}">0</span>

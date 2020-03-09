@@ -31,6 +31,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(sessionInterceptor);
         registry.addInterceptor(userInterceptor).addPathPatterns("/profile/**");
-        registry.addInterceptor(notificationInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(notificationInterceptor);
     }
 }

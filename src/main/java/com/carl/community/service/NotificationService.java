@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Service
 public class NotificationService {
-    
+
     private NotificationMapper notificationMapper;
 
     private UserMapper userMapper;
@@ -64,16 +64,27 @@ public class NotificationService {
 
     public int getUnreadCount(long userId) {
         NotificationExample notificationExample = new NotificationExample();
-        notificationExample.createCriteria().andReceiverEqualTo(userId).andStatusEqualTo(0);
+        notificationExample.createCriteria().andReceiverEqualTo(userId)
+                .andStatusEqualTo(NotificationStatus.UNREAD.getStatus());
         long value = notificationMapper.countByExample(notificationExample);
         return Math.toIntExact(value);
     }
 
-    public void read(Long receiverId) {
+    public void allRead(Long receiverId) {
         Notification notification = new Notification();
         notification.setStatus(NotificationStatus.READ.getStatus());
         NotificationExample notificationExample = new NotificationExample();
         notificationExample.createCriteria().andReceiverEqualTo(receiverId);
         notificationMapper.updateByExampleSelective(notification, notificationExample);
     }
+
+    public NotificationDTO readOne(Long id) {
+        Notification notification = notificationMapper.selectByPrimaryKey(id);
+        notification.setStatus(NotificationStatus.READ.getStatus());
+        notificationMapper.updateByPrimaryKeySelective(notification);
+        NotificationDTO notificationDTO = new NotificationDTO();
+        BeanUtils.copyProperties(notification, notificationDTO);
+        return notificationDTO;
+    }
+
 }

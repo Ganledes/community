@@ -1,5 +1,7 @@
 package com.carl.community.interceptor;
 
+import com.carl.community.exception.CustomizeException;
+import com.carl.community.exception.ErrorMessage;
 import com.carl.community.mapper.UserMapper;
 import com.carl.community.model.User;
 import com.carl.community.model.UserExample;
@@ -34,9 +36,10 @@ public class SessionInterceptor implements HandlerInterceptor {
                     UserExample userExample = new UserExample();
                     userExample.createCriteria().andTokenEqualTo(token);
                     List<User> users = userMapper.selectByExample(userExample);
-                    if (!users.isEmpty()) {
-                        request.getSession().setAttribute("user", users.get(0));
+                    if (users.size() != 1) {
+                        throw new CustomizeException(ErrorMessage.SERVER_ERROR);
                     }
+                    request.getSession().setAttribute("user", users.get(0));
                     break;
                 }
             }

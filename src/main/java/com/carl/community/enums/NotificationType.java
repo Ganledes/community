@@ -33,4 +33,8 @@ public enum NotificationType {
         }
         throw new CustomizeException(ErrorMessage.SERVER_ERROR);
     }
+
+    public static boolean isReply(int type) {
+        return type == NotificationType.REPLY_QUESTION.type || type == NotificationType.REPLY_COMMENT.type;
+    }
 }

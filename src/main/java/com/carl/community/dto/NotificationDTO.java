@@ -15,6 +15,10 @@ public class NotificationDTO {
 
     private Long gmtCreate;
 
+    private Long parentId;
+
+    private Integer type;
+
     private String outerTittle;
 
     private String action;

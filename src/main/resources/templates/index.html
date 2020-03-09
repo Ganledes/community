@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>码匠社区</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
@@ -22,7 +24,7 @@
 <div th:replace="navigation :: copy"></div>
 <div class="container main">
     <div class="row">
-        <div class="col-md-9 col-sm-12">
+        <div class="col-md-9">
             <h2><span class="glyphicon glyphicon-list" aria-hidden="true"> </span> 发现</h2>
             <hr>
             <div class="media" th:each="question : ${pagination.list}">
@@ -72,7 +74,7 @@
                 </ul>
             </nav>
         </div>
-        <div class="col-md-3 col-sm-12">
+        <div class="col-md-3">
             <h4>热门话题</h4>
         </div>
     </div>

@@ -83,18 +83,22 @@ public class CommentService {
             if (targetComment == null) {
                 throw new CustomizeException(ErrorMessage.COMMENT_TARGET_NOT_FOUND);
             }
+            Question parentQuestion = questionMapper.selectByPrimaryKey(targetComment.getParentId());
+            if (parentQuestion == null) {
+                throw new CustomizeException(ErrorMessage.COMMENT_TARGET_NOT_FOUND);
+            }
             commentMapper.insertSelective(comment);
             // 增加评论数
-            Comment parentComment = new Comment();
-            parentComment.setId(comment.getParentId());
-            parentComment.setCommentCount(1);
-            commentMapperExt.incCommentCount(parentComment);
+            Comment addCommentCount = new Comment();
+            addCommentCount.setId(comment.getParentId());
+            addCommentCount.setCommentCount(1);
+            commentMapperExt.incCommentCount(addCommentCount);
             // 创建通知
             Notification notification = new Notification();
             notification.setCreatorId(comment.getCommenter());
             notification.setReceiver(targetComment.getCommenter());
             notification.setType(NotificationType.REPLY_COMMENT.getType());
-            notification.setParentId(targetComment.getId());
+            notification.setParentId(parentQuestion.getId());
             notification.setStatus(NotificationStatus.UNREAD.getStatus());
             notification.setOuterTittle(targetComment.getContent());
             notificationService.create(notification);

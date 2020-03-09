@@ -23,7 +23,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li th:if="${session.user != null}"><a href="/publish">发布问题</a></li>
                 <li th:if="${session.user != null}">
-                    <a href="/profile/notifications">通知
+                    <a href="/profile/notification">通知
                         <span class="badge"
                               th:if="${session.notificationCount != null && session.notificationCount > 0}"
                               th:text="${session.notificationCount}">0</span>
