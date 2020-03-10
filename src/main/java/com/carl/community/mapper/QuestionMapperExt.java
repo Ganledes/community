@@ -1,5 +1,6 @@
 package com.carl.community.mapper;
 
+import com.carl.community.dto.QuestionQueryDTO;
 import com.carl.community.model.Question;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -23,4 +24,8 @@ public interface QuestionMapperExt {
     int incCommentCount(Question question);
 
     List<Question> selectRelated(Question question);
+
+    long countSearch(String search);
+
+    List<Question> selectSearch(QuestionQueryDTO queryDTO);
 }

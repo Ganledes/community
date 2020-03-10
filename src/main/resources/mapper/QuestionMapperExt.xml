@@ -34,4 +34,15 @@
     where ID = #{id}
   </update>
 
+  <select id="countSearch" parameterType="java.lang.String" resultType="java.lang.Long">
+    select count(*) from QUESTION
+    where TITLE regexp #{search}
+  </select>
+
+  <select id="selectSearch" parameterType="com.carl.community.dto.QuestionQueryDTO" resultMap="BaseResultMap">
+    select * from QUESTION
+    where TITLE regexp #{search}
+    limit #{start}, #{size}
+  </select>
+
 </mapper>

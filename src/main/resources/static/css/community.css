@@ -95,3 +95,8 @@ body {
 #tag_selector {
     display: none;
 }
+.footer {
+    color: #666;
+    font-size: 12px;
+    margin-top: 30px;
+}

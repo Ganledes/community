@@ -26,7 +26,9 @@ public class NotificationInterceptor implements HandlerInterceptor {
         User user = (User) request.getSession().getAttribute("user");
         if (user != null) {
             int unreadCount = notificationService.getUnreadCount(user.getId());
-            request.getSession().setAttribute("notificationCount", unreadCount);
+            if (unreadCount > 0) {
+                request.getSession().setAttribute("notificationCount", unreadCount);
+            }
         }
         return true;
     }
